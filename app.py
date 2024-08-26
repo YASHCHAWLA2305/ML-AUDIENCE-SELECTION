@@ -4,13 +4,24 @@ from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
 
-# Load the model and preprocessing objects
+import pickle
+import os
+
+# Get the directory of the current script
+base_dir = os.path.dirname(__file__)
+
+# Construct file paths relative to the script location
+svr_path = os.path.join(base_dir, 'svr.pkl')
+encoder_path = os.path.join(base_dir, 'encoder.pkl')
+scaler_path = os.path.join(base_dir, 'scaler.pkl')
+
+# Load the models and preprocessing objects
 try:
-    with open('C:\\Users\\Sham Sunder Chawla\\Desktop\\MLDEPLOYMENT\\svr.pkl', 'rb') as file:
+    with open(svr_path, 'rb') as file:
         svr = pickle.load(file)
-    with open('C:\\Users\\Sham Sunder Chawla\\Desktop\\MLDEPLOYMENT\\encoder.pkl', 'rb') as file:
+    with open(encoder_path, 'rb') as file:
         encoder = pickle.load(file)
-    with open('C:\\Users\\Sham Sunder Chawla\\Desktop\\MLDEPLOYMENT\\scaler.pkl', 'rb') as file:
+    with open(scaler_path, 'rb') as file:
         scaler = pickle.load(file)
 except Exception as e:
     print(f"Error loading files: {e}")
