@@ -36,48 +36,48 @@ def predict():
     try:
         # Get form data
         form_data = {
-            'card_lim': float(request.form.get('card_lim')),
+            'Credit Card Limit': int(request.form.get('Credit Card Limit')),
             'emi_active': int(request.form.get('emi_active')),
-            'age': float(request.form.get('age')),
-            'Emp_Tenure_Years': float(request.form.get('Emp_Tenure_Years')),
-            'Tenure_with_Bank': float(request.form.get('Tenure_with_Bank')),
-            'NetBanking_Flag': int(request.form.get('NetBanking_Flag')),
-            'Total Credit Consumption': float(request.form.get('Total_Credit_Consumption')),
-            'Total debit Consumption': float(request.form.get('Total_debit_Consumption')),
-            'Total Investment': float(request.form.get('Total_Investment')),
-            'account_type': request.form.get('account_type'),
-            'gender': request.form.get('gender'),
-            'Income': request.form.get('Income')
+            'age': int(request.form.get('age')),
+            'Emp_Tenure_Years': int(request.form.get('Emp_Tenure_Years')),
+            'Tenure_with_Bank': int(request.form.get('Tenure_with_Bank')),
+            'NetBanking': int(request.form.get('NetBanking')),
+            'Monthly Viewership': int(request.form.get('Monthly Viewership')),
+            'Monthly Expense': int(request.form.get('Monthly Expense')),
+            'Monthly Income': int(request.form.get('Monthly Income')),
+            'Marital Status': request.form.get('Marital Status'),
+            'Target Audience': request.form.get('Target Audience'),
+            'Channel': request.form.get('Channel')
         }
 
         # Encode 'Income'
-        income_encoding_map = {'HIGH': 0, 'MEDIUM': 1, 'LOW': 2}
-        form_data['encoded_Income'] = income_encoding_map.get(form_data['Income'].upper(), -1)
+        Channel_encoding_map = {'Star Plus': 0, 'Sab TV': 1, 'Colors': 2}
+        form_data['encoded_Channel'] = Channel_encoding_map.get(form_data['Channel'].upper(), -1)
 
         # Convert form data to DataFrame
         data = pd.DataFrame([form_data])
 
         # One-Hot Encode categorical variables
-        categorical_features = data[['account_type', 'gender']]
+        categorical_features = data[['Marital Status', 'Target Audience']]
         encoded_features = encoder.transform(categorical_features)
-        encoded_features_df = pd.DataFrame(encoded_features, columns=encoder.get_feature_names_out(['account_type', 'gender']))
+        encoded_features_df = pd.DataFrame(encoded_features, columns=encoder.get_feature_names_out(['Marital Status', 'Target Audience']))
 
         # Drop original categorical columns
-        data = data.drop(['account_type', 'gender'], axis=1)
+        data = data.drop(['Marital Status', 'Target Audience'], axis=1)
         
         # Concatenate the encoded features
         data = pd.concat([data, encoded_features_df], axis=1)
 
         # Drop original 'Income' column since it is now encoded
-        data = data.drop(['Income'], axis=1)
+        data = data.drop(['Channel'], axis=1)
 
         # Define the expected columns
         expected_columns = [
-            'card_lim', 'emi_active', 'age', 'Emp_Tenure_Years', 'Tenure_with_Bank', 
-            'NetBanking_Flag', 'Total Credit Consumption', 'Total debit Consumption', 
-            'Total Investment', 'encoded_Income', 'account_type_Current', 'account_type_Savings', 
-            'gender_Female', 'gender_Male'
-        ]
+              'Credit Card Limit', 'emi_active', 'age', 'Emp_Tenure_Years', 'Tenure_with_Bank',
+               'NetBanking', 'Monthly Viewership', 'Monthly Expense', 'Monthly Income', 
+            'Marital Status', 'Target Audience', 'Channel'
+    ]
+
 
         # Reorder the DataFrame to match the expected column order
         data = data[expected_columns]
@@ -89,11 +89,11 @@ def predict():
         prediction = svr.predict(data_scaled)
 
         # Format prediction as an integer
-        predicted_credit_limit = int(round(prediction[0]))
+        Audience_selection = int(round(prediction[0]))
 
         return jsonify({
-            'message': 'Credit limit prediction successful',
-            'predicted_credit_limit': predicted_credit_limit
+            'message': 'Audience Should be targeted',
+            'predicted_credit_limit': Audience_selection
         })
     
     except Exception as e:

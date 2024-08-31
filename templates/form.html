@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Credit Limit Predictor</title>
+    <title>Audience Selection</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,14 +13,17 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            padding: 10px; /* Ensure there’s some padding for smaller screens */
+            box-sizing: border-box;
         }
         .container {
             background: #e0f7fa; /* Soft blue background for the form */
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 800px; /* Adjust width as needed */
+            max-width: 100%; /* Ensure it does not overflow on small screens */
             width: 100%;
+            max-width: 600px; /* Adjust width as needed */
             text-align: center;
         }
         h1 {
@@ -43,21 +46,21 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 600px; /* Adjust width as needed */
             margin-bottom: 20px;
         }
         label {
             font-weight: bold;
             color: #555;
-            text-align: center;
+            text-align: left;
             width: 100%;
+            margin-bottom: 5px;
         }
         input, select {
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
             width: 100%;
-            max-width: 500px; /* Adjust width to fit the page */
+            max-width: 100%; /* Make sure inputs take full width of parent */
         }
         button {
             background-color: #007bff;
@@ -68,6 +71,8 @@
             cursor: pointer;
             font-size: 16px;
             margin-top: 20px;
+            width: 100%; /* Ensure button takes full width on smaller screens */
+            max-width: 300px;
         }
         button:hover {
             background-color: #0056b3;
@@ -89,87 +94,103 @@
             font-size: 18px;
             color: #333;
         }
+
+        /* Make form responsive on smaller screens */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            input, select {
+                font-size: 14px;
+                padding: 6px;
+            }
+            button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <img src="{{ url_for('static', filename='bank logo.jpeg') }}" alt="Credit Limit Predictor" class="logo">
-        <h1>Credit Limit Predictor</h1>
+        <h1>Audience Selection</h1>
         <form action="/predict" method="post">
+            <div class="form-group">
+                <label for="Credit Card Limit">Credit Card Limit:</label>
+                <input type="number" id="Credit Card Limit" name="Credit Card Limit" required>
+            </div>
 
+            <div class="form-group">
+                <label for="emi_active">EMI Active:</label>
+                <input type="number" id="emi_active" name="emi_active" required>
+            </div>
 
-<div class="form-group">
-    <label for="card_lim">Card Limit:</label>
-    <input type="number" id="card_lim" name="card_lim" required>
-</div>
+            <div class="form-group">
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" required>
+            </div>
 
-<div class="form-group">
-    <label for="emi_active">EMI Active:</label>
-    <input type="number" id="emi_active" name="emi_active" required>
-    </select>
-</div>
+            <div class="form-group">
+                <label for="Emp_Tenure_Years">Employee Tenure (Years):</label>
+                <input type="number" id="Emp_Tenure_Years" name="Emp_Tenure_Years" required>
+            </div>
 
-<div class="form-group">
-    <label for="age">Age:</label>
-    <input type="number" id="age" name="age" required>
-</div>
+            <div class="form-group">
+                <label for="Tenure_with_Bank">Tenure with Bank:</label>
+                <input type="number" id="Tenure_with_Bank" name="Tenure_with_Bank" required>
+            </div>
 
-<div class="form-group">
-    <label for="Emp_Tenure_Years">Employee Tenure (Years):</label>
-    <input type="number" id="Emp_Tenure_Years" name="Emp_Tenure_Years" required>
-</div>
+            <div class="form-group">
+                <label for="NetBanking">Net Banking:</label>
+                <select id="NetBanking" name="NetBanking" required>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+            </div>
 
-<div class="form-group">
-    <label for="Tenure_with_Bank">Tenure with Bank:</label>
-    <input type="number" id="Tenure_with_Bank" name="Tenure_with_Bank" required>
-</div>
+            <div class="form-group">
+                <label for="Monthly Viewership">Total Credit Consumption:</label>
+                <input type="number" id="Monthly Viewership" name="Monthly Viewership" required>
+            </div>
 
-<div class="form-group">
-    <label for="NetBanking_Flag">Net Banking:</label>
-    <select id="NetBanking_Flag" name="NetBanking_Flag" required>
-        <option value="0">No</option>
-        <option value="1">Yes</option>
-    </select>
-</div>
+            <div class="form-group">
+                <label for="Monthly Expense">Total Debit Consumption:</label>
+                <input type="number"  id="Monthly Expense" name="Monthly Expense" required>
+            </div>
 
-<div class="form-group">
-    <label for="Total_Credit_Consumption">Total Credit Consumption:</label>
-    <input type="number" step="0.01" id="Total_Credit_Consumption" name="Total_Credit_Consumption" required>
-</div>
+            <div class="form-group">
+                <label for="Monthly Income">Total Investment:</label>
+                <input type="number"  id="Monthly Income" name="Monthly Income" required>
+            </div>
 
-<div class="form-group">
-    <label for="Total_debit_Consumption">Total Debit Consumption:</label>
-    <input type="number" step="0.01" id="Total_debit_Consumption" name="Total_debit_Consumption" required>
-</div>
+            <div class="form-group">
+                <label for="Marital Status">Account Type:</label>
+                <select id="Marital Status" name="Marital Status" required>
+                    <option value="Married">Married</option>
+                    <option value="Unmarried">Unmarried</option>
+                </select>
+            </div>
 
-<div class="form-group">
-    <label for="Total_Investment">Total Investment:</label>
-    <input type="number" step="0.01" id="Total_Investment" name="Total_Investment" required>
-</div>
+            <div class="form-group">
+                <label for="Target Audience">Gender:</label>
+                <select id="Target Audience" name="Target Audience" required>
+                    <option value="Female">Female</option>
+                    <option value="Male">Male</option>
+                </select>
+            </div>
 
-<div class="form-group">
-    <label for="account_type">Account Type:</label>
-    <select id="account_type" name="account_type" required>
-        <option value="Current">Current</option>
-        <option value="Savings">Saving</option>
-    </select>
-</div>
+            <div class="form-group">
+                <label for="Channel">Income:</label>
+                <select id="Channel" name="Channel" required>
+                    <option value="0">Star Plus</option>
+                    <option value="1">Sab TV</option>
+                    <option value="2">Colors</option>
+                </select>
+            </div>
 
-<div class="form-group">
-    <label for="gender">Gender:</label>
-    <select id="gender" name="gender" required>
-        <option value="Female">Female</option>
-        <option value="Male">Male</option>
-    </select>
-</div>
-
-<div class="form-group">
-    <label for="Income">Income:</label>
-    <select id="Income" name="Income" required>
-        <option value="0">HIGH</option>
-        <option value="1">MEDIUM</option>
-        <option value="2">LOW</option>
-    </select>
-</div>
-
-<button type="submit">Submit</button>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
