@@ -1,11 +1,9 @@
 import pandas as pd
 import pickle
 from flask import Flask, request, jsonify, render_template
+import os
 
 app = Flask(__name__)
-
-import pickle
-import os
 
 # Get the directory of the current script
 base_dir = os.path.dirname(__file__)
@@ -50,9 +48,9 @@ def predict():
             'Channel': request.form.get('Channel')
         }
 
-        # Encode 'Income'
+        # Encode 'Channel'
         Channel_encoding_map = {'Star Plus': 0, 'Sab TV': 1, 'Colors': 2}
-        form_data['encoded_Channel'] = Channel_encoding_map.get(form_data['Channel'].upper(), -1)
+        form_data['encoded_Channel'] = Channel_encoding_map.get(form_data['Channel'], -1)
 
         # Convert form data to DataFrame
         data = pd.DataFrame([form_data])
@@ -62,25 +60,21 @@ def predict():
         encoded_features = encoder.transform(categorical_features)
         encoded_features_df = pd.DataFrame(encoded_features, columns=encoder.get_feature_names_out(['Marital Status', 'Target Audience']))
 
-        # Drop original categorical columns
-        data = data.drop(['Marital Status', 'Target Audience'], axis=1)
-        
+        # Drop original categorical columns and the 'Channel' column
+        data = data.drop(['Marital Status', 'Target Audience', 'Channel'], axis=1)
+
         # Concatenate the encoded features
         data = pd.concat([data, encoded_features_df], axis=1)
 
-        # Drop original 'Income' column since it is now encoded
-        data = data.drop(['Channel'], axis=1)
-
-        # Define the expected columns
-        expected_columns = [
-              'Credit Card Limit', 'emi_active', 'age', 'Emp_Tenure_Years', 'Tenure_with_Bank',
-               'NetBanking', 'Monthly Viewership', 'Monthly Expense', 'Monthly Income', 
-            'Marital Status', 'Target Audience', 'Channel'
-    ]
-
-
         # Reorder the DataFrame to match the expected column order
-        data = data[expected_columns]
+        expected_columns = [
+            'Credit Card Limit', 'emi_active', 'age', 'Emp_Tenure_Years', 
+            'Tenure_with_Bank', 'NetBanking', 'Monthly Viewership', 
+            'Monthly Expense', 'Monthly Income','encoded_Channel',
+            'Marital Status_Married', 'Marital Status_Unmarried', 
+            'Target Audience_Female', 'Target Audience_Male'
+        ]
+        data = data.reindex(columns=expected_columns, fill_value=0)
 
         # Apply StandardScaler
         data_scaled = scaler.transform(data)
@@ -88,12 +82,12 @@ def predict():
         # Make prediction
         prediction = svr.predict(data_scaled)
 
-        # Format prediction as an integer
-        Audience_selection = int(round(prediction[0]))
+        audience_selection = int(round(prediction[0]))
+        result = 'Yes' if audience_selection == 1 else 'No'
 
         return jsonify({
-            'message': 'Audience Should be targeted',
-            'predicted_credit_limit': Audience_selection
+            
+            'Audience Should be targeted': result
         })
     
     except Exception as e:
